@@ -1,5 +1,6 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+
+namespace Pmagictech\DataTables;
 
 
 class DataTableQuery
@@ -10,7 +11,7 @@ class DataTableQuery
     /**
      * DataTableColumnDefs object.
      *
-     * @var \Hermawan\DataTables\DataTableColumnDefs
+     * @var DataTableColumnDefs
      */
     private $columnDefs;
 
@@ -68,11 +69,11 @@ class DataTableQuery
     /* End Modified column */
 
 
-   /* Generating result */
+    /* Generating result */
 
     public function countAll()
     {
-    	$builder = clone $this->builder;
+        $builder = clone $this->builder;
 
         $this->countResult = $this->countResult !== NULL ? $this->countResult : $builder->countAllResults();
         return $this->countResult;
@@ -84,7 +85,7 @@ class DataTableQuery
 
         $this->queryFilterSearch($builder);
 
-        $this->countResult = ($this->countResult !== NULL && ! $this->doQueryFilter) ? $this->countResult : $builder->countAllResults();
+        $this->countResult = ($this->countResult !== NULL && !$this->doQueryFilter) ? $this->countResult : $builder->countAllResults();
 
         return $this->countResult;
     }
@@ -95,17 +96,15 @@ class DataTableQuery
         $queryResult = $this->queryResult();
         $result      = [];
 
-        foreach ($queryResult as $row)
-        {
+        foreach ($queryResult as $row) {
             //escaping all
-            foreach($row as $key => $val)
+            foreach ($row as $key => $val)
                 $row->$key = esc($val);
 
             $data    = [];
             $columns = $this->columnDefs->getColumns();
 
-            foreach ($columns as $column)
-            {
+            foreach ($columns as $column) {
                 switch ($column->type) {
                     case 'numbering':
                         $value = $this->columnDefs->getNumbering();
@@ -131,13 +130,12 @@ class DataTableQuery
                         break;
                 }
 
-                if($this->columnDefs->returnAsObject){
-                    if($column->type === 'primary')
+                if ($this->columnDefs->returnAsObject) {
+                    if ($column->type === 'primary')
                         $data[self::DT_ROW_ID] = $value;
                     else
                         $data[$column->alias] = $value;
-                }
-                else
+                } else
                     $data[] = $value;
             }
 
@@ -160,25 +158,23 @@ class DataTableQuery
 
         foreach ($data as $rowData) {
             $row = [];
-            foreach ($columns as $column)
-            {
-                if(isset($rowData[$column->alias])){
+            foreach ($columns as $column) {
+                if (isset($rowData[$column->alias])) {
                     $builder->set($column->key, $rowData[$column->alias]);
                     $row[$column->alias] = esc($rowData[$column->alias]);
 
-                    if($column->type === 'primary')
+                    if ($column->type === 'primary')
                         $row[self::DT_ROW_ID] = esc($rowData[$column->alias]);
                 }
             }
 
-            if($builder->insert()){
-                if(!isset($row[self::DT_ROW_ID]))
+            if ($builder->insert()) {
+                if (!isset($row[self::DT_ROW_ID]))
                     $row[self::DT_ROW_ID] = $builder->db()->insertID();
 
                 $result[] = $row;
 
-                if($this->postQuery !== NULL)
-                {
+                if ($this->postQuery !== NULL) {
                     $callback = $this->postQuery;
                     $callback($builder, $row);
                 }
@@ -197,19 +193,17 @@ class DataTableQuery
 
         foreach ($data as $key => $rowData) {
             $row = [];
-            foreach ($rowData as $columnKey => $value)
-            {
+            foreach ($rowData as $columnKey => $value) {
                 $builder->set($columnKey, $value);
                 $row[$columnKey] = esc($value);
             }
 
             $builder->where($primaryKey, $key);
 
-            if($builder->update()){
+            if ($builder->update()) {
                 $result[] = $row;
 
-                if($this->postQuery !== NULL)
-                {
+                if ($this->postQuery !== NULL) {
                     $callback = $this->postQuery;
                     $callback($builder, $row);
                 }
@@ -230,22 +224,20 @@ class DataTableQuery
 
         foreach ($data as $key => $rowData) {
             $row = [];
-            foreach ($columns as $column)
-            {
-                if(isset($rowData[$column->alias]))
+            foreach ($columns as $column) {
+                if (isset($rowData[$column->alias]))
                     $row[$column->alias] = esc($rowData[$column->alias]);
 
-                if($column->type === 'primary')
+                if ($column->type === 'primary')
                     $row[self::DT_ROW_ID] = esc($rowData[$column->alias]);
             }
 
             $builder->where($primaryKey, $key);
 
-            if($builder->delete()){
+            if ($builder->delete()) {
                 $result[] = $row;
 
-                if($this->postQuery !== NULL)
-                {
+                if ($this->postQuery !== NULL) {
                     $callback = $this->postQuery;
                     $callback($builder, $row);
                 }
@@ -264,18 +256,15 @@ class DataTableQuery
         $orderables         = $this->columnDefs->getOrderables();
         $oderColumnRequests = Request::get('order');
 
-        if($oderColumnRequests)
-        {
-            foreach ($oderColumnRequests as $request)
-            {
+        if ($oderColumnRequests) {
+            foreach ($oderColumnRequests as $request) {
                 $dir    = ($request['dir'] == 'desc') ? 'desc' : 'asc';
                 $column = $orderables[$request['column']] ?? NULL;
 
-                if( $column !== NULL)
+                if ($column !== NULL)
                     $builder->orderBy($column, $dir);
             }
         }
-
     }
 
 
@@ -283,11 +272,9 @@ class DataTableQuery
     {
         //individual column search (multi column search)
         $columnRequests = Request::get('columns');
-        foreach ($columnRequests as $index => $request)
-        {
+        foreach ($columnRequests as $index => $request) {
 
-            if($request['search']['value'] != '')
-            {
+            if ($request['search']['value'] != '') {
                 $column              = $this->columnDefs->getSearchRequest($index, $request);
                 $this->doQueryFilter = TRUE;
 
@@ -298,12 +285,10 @@ class DataTableQuery
         //global search
         $searchRequest = Request::get('search');
 
-        if($searchRequest['value'] != '')
-        {
+        if ($searchRequest['value'] != '') {
             $searchable = $this->columnDefs->getSearchable();
 
-            if(! empty($searchable))
-            {
+            if (!empty($searchable)) {
                 $this->doQueryFilter = TRUE;
 
                 $builder->groupStart();
@@ -320,14 +305,13 @@ class DataTableQuery
 
     private function queryFilter($builder)
     {
-        if($this->filter !== NULL)
-        {
+        if ($this->filter !== NULL) {
             $testBuilder = clone $builder;
 
             $callback = $this->filter;
             $callback($builder, Request::get());
 
-            if($testBuilder != $builder)
+            if ($testBuilder != $builder)
                 $this->doQueryFilter = TRUE;
         }
     }
@@ -338,13 +322,12 @@ class DataTableQuery
 
         $this->queryOrder($builder);
 
-        if(Request::get('length') != -1)
+        if (Request::get('length') != -1)
             $builder->limit(Request::get('length'), Request::get('start'));
 
         $this->queryFilterSearch($builder);
 
-        if($this->postQuery !== NULL)
-        {
+        if ($this->postQuery !== NULL) {
             $callback = $this->postQuery;
             $callback($builder);
         }
@@ -353,5 +336,4 @@ class DataTableQuery
     }
 
     /* End Querying */
-
 }   // End of DataTableQuery Class.

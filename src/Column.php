@@ -1,6 +1,6 @@
 <?php
 
-namespace Hermawan\DataTables;
+namespace Pmagictech\DataTables;
 
 class Column
 {

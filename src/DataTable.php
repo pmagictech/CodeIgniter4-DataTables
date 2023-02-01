@@ -1,5 +1,6 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+
+namespace Pmagictech\DataTables;
 
 use \Config\Services;
 
@@ -9,7 +10,7 @@ class DataTable
     /**
      * DataTableQuery object.
      *
-     * @var \Hermawan\DataTables\DataTableQuery
+     * @var DataTableQuery
      */
     private $query;
 
@@ -17,7 +18,7 @@ class DataTable
     /**
      * DataTableColumnDefs object.
      *
-     * @var \Hermawan\DataTables\DataTableColumnDefs
+     * @var DataTableColumnDefs
      */
     private $columnDefs;
 
@@ -36,7 +37,7 @@ class DataTable
      */
     public function __construct($builder, $primaryKey = 'id')
     {
-        if(is_subclass_of($builder, '\CodeIgniter\BaseModel') && method_exists($builder, 'builder')){
+        if (is_subclass_of($builder, '\CodeIgniter\BaseModel') && method_exists($builder, 'builder')) {
             $builder = $builder->builder();
         }
         $this->query      = new DataTableQuery($builder);
@@ -163,7 +164,7 @@ class DataTable
     }
 
 
-     /**
+    /**
      * Return JSON output
      *
      * @param bool $returnAsObject
@@ -171,10 +172,10 @@ class DataTable
      */
     public function toJson($returnAsObject = NULL)
     {
-        if(Request::get('draw'))
+        if (Request::get('draw'))
             return $this->handleDrawRequest($returnAsObject);
 
-        else if(Request::get('action'))
+        else if (Request::get('action'))
             return $this->handleActionRequest($returnAsObject);
 
         return self::throwError('no datatable request detected');
@@ -183,7 +184,7 @@ class DataTable
 
     private function handleDrawRequest($returnAsObject)
     {
-        if($returnAsObject !== NULL)
+        if ($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
 
         $this->query->setColumnDefs($this->columnDefs);
@@ -201,7 +202,7 @@ class DataTable
 
     private function handleActionRequest($returnAsObject)
     {
-        if($returnAsObject !== NULL)
+        if ($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
 
         $this->query->setColumnDefs($this->columnDefs);
@@ -210,7 +211,7 @@ class DataTable
 
         $response = Services::response();
 
-        switch(Request::get('action')){
+        switch (Request::get('action')) {
             case 'create':
                 return $response->setJSON([
                     'data' => $this->query->insertData($data, $this->primaryKey)
@@ -245,5 +246,4 @@ class DataTable
             'error' => $message,
         ]);
     }
-
 }   // End of DataTables Library Class.

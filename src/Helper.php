@@ -1,5 +1,6 @@
-<?php 
-namespace Hermawan\DataTables;
+<?php
+
+namespace Pmagictech\DataTables;
 
 class Helper
 {
@@ -8,10 +9,9 @@ class Helper
     {
         $rp = new \ReflectionProperty($object, $varName);
 
-        if($rp->isPublic())
+        if ($rp->isPublic())
             return $object->$varName;
-        else
-        {
+        else {
             $rp->setAccessible(TRUE);
             return $rp->getValue($object);
         }

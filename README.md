@@ -4,7 +4,8 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/hermawanramadhan/CodeIgniter4-DataTables?label=size)
 ![GitHub](https://img.shields.io/github/license/hermawanramadhan/CodeIgniter4-DataTables)
 
-Server-side Datatables library for CodeIgniter4 PHP framework
+Server-side Datatables library for CodeIgniter4 PHP framework forked from [hermawan/codeigniter4-datatables](https://github.com/hermawanramadhan/CodeIgniter4-DataTables)
+
 CodeIgniter4-DataTables is CodeIgniter4 Library to handle server-side processing of DataTables jQuery Plugin via AJAX option by using Query Builder CodeIgniter 4
 
 # Documentation
@@ -21,7 +22,7 @@ For more complete example and demo please visit [Documentation here](https://cod
 ### Using composer (recommended)
 Use composer to install CodeIgniter4-DataTables into your project :
 
-  > composer require hermawan/codeigniter4-datatables
+  > composer require pmagictech/codeigniter4-datatables
 
 ### Manual installation
 Or If you prefer not to use Composer to install, you can install manually. 
@@ -36,7 +37,7 @@ $psr4 = [
      APP_NAMESPACE => APPPATH, // For custom app namespace
      'Config'      => APPPATH . 'Config',
      'PHPSQLParser'          => APPPATH .'ThirdParty/php-sql-parser/src/PHPSQLParser', // <-- namespace for php-sql-parser
-     'Hermawan\DataTables'   => APPPATH .'ThirdParty/codeigniter4-datatables/src', // <-- namespace for this library
+     'Pmagictech\DataTables'   => APPPATH .'ThirdParty/codeigniter4-datatables/src', // <-- namespace for this library
 ];
 ```
 
@@ -50,7 +51,7 @@ This is simple basic code just write `DataTable::of($builder)` call method `toJs
 
 **Controller :**
 ```php
-use \Hermawan\DataTables\DataTable;
+use \Pmagictech\DataTables\DataTable;
 
 public function ajaxDatatable()
 {
@@ -67,7 +68,7 @@ This is simple example basic code
 
 **Controller :**
 ```php
-use \Hermawan\DataTables\DataTable;
+use \Pmagictech\DataTables\DataTable;
 use \App\Models\CustomerModel;
 
 public function ajaxDatatable()
@@ -97,7 +98,7 @@ For basis initializing as seen here https://editor.datatables.net/examples/simpl
 
 **Controller :**
 ```php
-use \Hermawan\DataTables\DataTable;
+use \Pmagictech\DataTables\DataTable;
 
 public function ajaxDatatable()
 {
@@ -105,7 +106,7 @@ public function ajaxDatatable()
     $builder = $db->table('customers')->select('customerNumber, customerName, phone, city, country, postalCode');
 
     $primaryKey = 'id';
-    return DataTable::of($builder, $primaryKey)->toJson();
+    return DataTable::of($builder, $primaryKey)->toJson(true);
 }
 ```
 

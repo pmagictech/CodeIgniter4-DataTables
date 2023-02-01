@@ -1,12 +1,13 @@
 <?php
-namespace Hermawan\DataTables;
+
+namespace Pmagictech\DataTables;
 
 use \Config\Services;
 
 class Request
 {
 
-	/**
+    /**
      * Get DataTable Request
      *
      * @param  String $requestName
@@ -16,10 +17,10 @@ class Request
 
     public static function get($requestName = NULL)
     {
-    	$request = Services::request();
-        if($requestName !== NULL)
-    	   return $request->getGetPost($requestName);
+        $request = Services::request();
+        if ($requestName !== NULL)
+            return $request->getGetPost($requestName);
 
-        return (Object) (($request->getMethod() == 'get') ? $request->getGet() : $request->getPost());
+        return (object) (($request->getMethod() == 'get') ? $request->getGet() : $request->getPost());
     }
 }
