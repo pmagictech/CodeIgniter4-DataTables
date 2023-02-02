@@ -61,7 +61,7 @@ class DataTable
     /**
      * postQuery
      *
-     * @param Closure $postQuery
+     * @param \Closure $postQuery
      */
     public function postQuery($postQuery)
     {
@@ -76,6 +76,15 @@ class DataTable
     public function filter($filterFunction)
     {
         $this->query->filter($filterFunction);
+        return $this;
+    }
+
+    /**
+     * @param \Closure|string $rowClass
+     */
+    public function setRowClass($rowClass)
+    {
+        $this->query->setRowClass($rowClass);
         return $this;
     }
 

@@ -24,11 +24,19 @@ class DataTableQuery
      */
     private $postQuery;
 
+    /**
+     *
+     * @var string|Closure
+     */
+    private $rowClass;
+
     private $countResult;
 
     private $doQueryFilter = FALSE;
 
     private const DT_ROW_ID = 'DT_RowId';
+
+    private const DT_ROW_CLASS = 'DT_RowClass';
 
 
     public function __construct($builder)
@@ -40,7 +48,7 @@ class DataTableQuery
     /**
      * columnDefs
      *
-     * @param \Hermawan\DataTables\DataTableColumnDefs $columnDefs
+     * @param DataTableColumnDefs $columnDefs
      */
     public function setColumnDefs($columnDefs)
     {
@@ -63,6 +71,15 @@ class DataTableQuery
     public function filter($filter)
     {
         $this->filter = $filter;
+    }
+
+    /**
+     *
+     * @param \Closure|string $rowClass
+     */
+    public function setRowClass($rowClass)
+    {
+        $this->rowClass = $rowClass;
     }
 
 
@@ -137,6 +154,15 @@ class DataTableQuery
                         $data[$column->alias] = $value;
                 } else
                     $data[] = $value;
+            }
+
+            if ($this->rowClass !== NULL) {
+                $rowClass = $this->rowClass;
+
+                if ($this->rowClass instanceof \Closure)
+                    $data[self::DT_ROW_CLASS] = $rowClass($row);
+                else
+                    $data[self::DT_ROW_CLASS] = $rowClass;
             }
 
             $result[] = $data;
