@@ -71,7 +71,7 @@ class DataTable
 
     /**
      * custom Filter
-     * @param Closure function
+     * @param \Closure function
      */
     public function filter($filterFunction)
     {
@@ -104,7 +104,7 @@ class DataTable
      * Add extra column
      *
      * @param String $column
-     * @param Closure $callback
+     * @param \Closure $callback
      * @param String|int $position
      */
     public function add($column, $callback, $position = 'last')
@@ -118,7 +118,7 @@ class DataTable
      * Edit column
      *
      * @param String $column
-     * @param Closure $callback
+     * @param \Closure $callback
      */
     public function edit($column, $callback)
     {
@@ -129,12 +129,18 @@ class DataTable
     /**
      * Format column
      *
-     * @param String $column
-     * @param Closure $callback
+     * @param String|Array $column
+     * @param \Closure $callback
      */
     public function format($column, $callback)
     {
-        $this->columnDefs->format($column, $callback);
+        if (is_array($column)) {
+            foreach ($column as $item) {
+                $this->columnDefs->format($item, $callback);
+            }
+        } else
+            $this->columnDefs->format($column, $callback);
+
         return $this;
     }
 
