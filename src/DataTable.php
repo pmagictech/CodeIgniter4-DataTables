@@ -258,6 +258,7 @@ class DataTable
     {
         $response = Services::response();
         return $response->setJSON([
+            'data' => [], // Empty data to prevent error on client side.
             'error' => $message,
         ]);
     }
