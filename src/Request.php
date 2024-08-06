@@ -21,6 +21,6 @@ class Request
         if ($requestName !== NULL)
             return $request->getGetPost($requestName);
 
-        return (object) (($request->getMethod() == 'get') ? $request->getGet() : $request->getPost());
+        return (object) (($request->getMethod() == 'GET') ? $request->getGet() : $request->getPost());
     }
 }
