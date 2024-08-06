@@ -2,6 +2,9 @@
 
 namespace Pmagictech\DataTables;
 
+use CodeIgniter\Database\BaseBuilder;
+use CodeIgniter\Database\RawSql;
+
 
 class DataTableQuery
 {
@@ -39,7 +42,7 @@ class DataTableQuery
     private const DT_ROW_CLASS = 'DT_RowClass';
 
 
-    public function __construct($builder)
+    public function __construct(BaseBuilder $builder)
     {
         $this->builder = $builder;
     }
@@ -174,7 +177,7 @@ class DataTableQuery
     /* End Generating result */
 
 
-    public function insertData($data)
+    public function insertData(array $data)
     {
         $builder = clone $this->builder;
 
@@ -211,7 +214,7 @@ class DataTableQuery
     }
 
 
-    public function updateData($data, $primaryKey)
+    public function updateData(array $data, string $primaryKey)
     {
         $builder = clone $this->builder;
 
@@ -240,7 +243,7 @@ class DataTableQuery
     }
 
 
-    public function deleteData($data, $primaryKey)
+    public function deleteData(array $data, string $primaryKey)
     {
         $builder = clone $this->builder;
 
@@ -276,14 +279,13 @@ class DataTableQuery
 
     /* Querying */
 
-    private function queryOrder($builder)
+    private function queryOrder(BaseBuilder $builder)
     {
-
         $orderables         = $this->columnDefs->getOrderables();
-        $oderColumnRequests = Request::get('order');
+        $orderColumnRequests = Request::get('order');
 
-        if ($oderColumnRequests) {
-            foreach ($oderColumnRequests as $request) {
+        if ($orderColumnRequests) {
+            foreach ($orderColumnRequests as $request) {
                 $dir    = ($request['dir'] == 'desc') ? 'desc' : 'asc';
                 $column = $orderables[$request['column']] ?? NULL;
 
@@ -294,7 +296,7 @@ class DataTableQuery
     }
 
 
-    private function queryFilterSearch($builder)
+    private function queryFilterSearch(BaseBuilder $builder)
     {
         //individual column search (multi column search)
         $columnRequests = Request::get('columns');
@@ -319,7 +321,7 @@ class DataTableQuery
 
                 $builder->groupStart();
                 foreach ($searchable as $column)
-                    $builder->orLike(trim($column), $searchRequest['value']);
+                    $builder->orLike(new RawSql(trim($column)), $searchRequest['value']);
 
                 $builder->groupEnd();
             }
@@ -329,7 +331,7 @@ class DataTableQuery
     }
 
 
-    private function queryFilter($builder)
+    private function queryFilter(BaseBuilder $builder)
     {
         if ($this->filter !== NULL) {
             $testBuilder = clone $builder;

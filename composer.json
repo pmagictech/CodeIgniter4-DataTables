@@ -3,8 +3,8 @@
   "description": "Serverside Datatables library for CodeIgniter4 forked from hermawan/codeigniter4-datatables",
   "type": "library",
   "require": {
-    "php": ">=7.3",
-    "codeigniter4/framework": "^4",
+    "php": ">=8.1",
+    "codeigniter4/framework": "^4.2",
     "greenlion/php-sql-parser": ">=4.5"
   },
   "license": "MIT",

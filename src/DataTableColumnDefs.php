@@ -2,6 +2,8 @@
 
 namespace Pmagictech\DataTables;
 
+use CodeIgniter\Database\BaseBuilder;
+
 class DataTableColumnDefs
 {
 
@@ -13,7 +15,7 @@ class DataTableColumnDefs
     public $returnAsObject = FALSE;
 
 
-    public function __construct($builder, $primaryKey)
+    public function __construct(BaseBuilder $builder, string $primaryKey)
     {
         $this->initFromBuilder($builder, $primaryKey);
     }
@@ -197,7 +199,7 @@ class DataTableColumnDefs
     }
 
 
-    public function initFromBuilder($baseBuilder, $primaryKey)
+    public function initFromBuilder(BaseBuilder $baseBuilder, string $primaryKey)
     {
         $builder  = clone $baseBuilder;
 
@@ -228,17 +230,7 @@ class DataTableColumnDefs
                         $alias  = $alias;
                     }
                 } elseif ($selectParsed['expr_type'] == 'function') {
-                    $key   = $selectParsed['base_expr'];
-                    $key  .= '(';
-
-                    $arrayKey = [];
-
-                    foreach ($selectParsed['sub_tree'] as $sub_tree)
-                        $arrayKey[] = $sub_tree['base_expr'];
-
-                    $key  .= implode($selectParsed['delim'] . ' ', $arrayKey);
-                    $key  .= ')';
-
+                    $key   = $this->handleFunctionExpression($selectParsed, $selectParsed['delim']);
                     $alias = !empty($selectParsed['alias']) ? end($selectParsed['alias']['no_quotes']['parts']) : $key;
                 } else {
                     if (!empty($selectParsed['alias'])) {
@@ -277,6 +269,27 @@ class DataTableColumnDefs
         }
 
         return $this;
+    }
+
+    private function handleFunctionExpression($selectParsed, $delim = ',')
+    {
+        $key   = $selectParsed['base_expr'];
+        $key  .= '(';
+
+        $arrayKey = [];
+
+        foreach ($selectParsed['sub_tree'] as $sub_tree) {
+            if ($sub_tree['expr_type'] == 'function') {
+                $arrayKey[] = $this->handleFunctionExpression($sub_tree, $delim);
+            } else {
+                $arrayKey[] = $sub_tree['base_expr'];
+            }
+        }
+
+        $key  .= implode($delim . ' ', $arrayKey);
+        $key  .= ')';
+
+        return $key;
     }
 
 

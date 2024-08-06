@@ -3,6 +3,8 @@
 namespace Pmagictech\DataTables;
 
 use \Config\Services;
+use CodeIgniter\Database\BaseBuilder;
+use CodeIgniter\Model;
 
 class DataTable
 {
@@ -33,7 +35,7 @@ class DataTable
 
     /**
      * Builder from CodeIgniter Query Builder
-     * @param  Builder $builder
+     * @param  BaseBuilder | Model $builder
      */
     public function __construct($builder, $primaryKey = 'id')
     {
@@ -50,7 +52,7 @@ class DataTable
      * Make a DataTable instance from builder.
      *
      * Builder from CodeIgniter Query Builder
-     * @param  Builder $builder
+     * @param  BaseBuilder $builder
      */
     public static function of($builder, $primaryKey = 'id')
     {
@@ -185,7 +187,7 @@ class DataTable
      * @param bool $returnAsObject
      * @return JSON
      */
-    public function toJson($returnAsObject = NULL)
+    public function toJson($returnAsObject = false)
     {
         if (Request::get('draw'))
             return $this->handleDrawRequest($returnAsObject);
@@ -197,7 +199,7 @@ class DataTable
     }
 
 
-    private function handleDrawRequest($returnAsObject)
+    private function handleDrawRequest(bool $returnAsObject)
     {
         if ($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
@@ -215,7 +217,7 @@ class DataTable
     }
 
 
-    private function handleActionRequest($returnAsObject)
+    private function handleActionRequest(bool $returnAsObject)
     {
         if ($returnAsObject !== NULL)
             $this->columnDefs->returnAsObject($returnAsObject);
@@ -229,7 +231,7 @@ class DataTable
         switch (Request::get('action')) {
             case 'create':
                 return $response->setJSON([
-                    'data' => $this->query->insertData($data, $this->primaryKey)
+                    'data' => $this->query->insertData($data)
                 ]);
 
             case 'edit':
