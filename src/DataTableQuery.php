@@ -33,7 +33,7 @@ class DataTableQuery
      */
     private $rowClass;
 
-    private $countResult;
+    private int | string $countResult;
 
     private $doQueryFilter = FALSE;
 
@@ -160,12 +160,11 @@ class DataTableQuery
             }
 
             if ($this->rowClass !== NULL) {
-                $rowClass = $this->rowClass;
+                $rowClass = $this->rowClass instanceof \Closure ? ($this->rowClass)($row) : $this->rowClass;
 
-                if ($this->rowClass instanceof \Closure)
-                    $data[self::DT_ROW_CLASS] = $rowClass($row);
-                else
+                if ($rowClass !== NULL){
                     $data[self::DT_ROW_CLASS] = $rowClass;
+                }
             }
 
             $result[] = $data;
