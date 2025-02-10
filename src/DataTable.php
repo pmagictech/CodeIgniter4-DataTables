@@ -2,7 +2,6 @@
 
 namespace Pmagictech\DataTables;
 
-use \Config\Services;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Model;
 
@@ -182,12 +181,10 @@ class DataTable
 
 
     /**
-     * Return JSON output
+     * Return the result of the DataTable
      *
-     * @param bool $returnAsObject
-     * @return JSON
      */
-    public function toJson($returnAsObject = false)
+    public function getResult($returnAsObject = false)
     {
         if (Request::get('draw'))
             return $this->handleDrawRequest($returnAsObject);
@@ -195,7 +192,7 @@ class DataTable
         else if (Request::get('action'))
             return $this->handleActionRequest($returnAsObject);
 
-        return self::throwError('no datatable request detected');
+        return self::handleError('no datatable request detected');
     }
 
 
@@ -206,14 +203,12 @@ class DataTable
 
         $this->query->setColumnDefs($this->columnDefs);
 
-        $response = Services::response();
-
-        return $response->setJSON([
+        return [
             'draw'              => Request::get('draw'),
             'recordsTotal'      => $this->query->countAll(),
             'recordsFiltered'   => $this->query->countFiltered(),
             'data'              => $this->query->getDataResult(),
-        ]);
+        ];
     }
 
 
@@ -226,42 +221,33 @@ class DataTable
 
         $data = Request::get('data');
 
-        $response = Services::response();
-
         switch (Request::get('action')) {
             case 'create':
-                return $response->setJSON([
+                return [
                     'data' => $this->query->insertData($data)
-                ]);
+                ];
 
             case 'edit':
-                return $response->setJSON([
+                return [
                     'data' => $this->query->updateData($data, $this->primaryKey)
-                ]);
+                ];
 
             case 'remove':
-                return $response->setJSON([
+                return [
                     'data' => $this->query->deleteData($data, $this->primaryKey)
-                ]);
+                ];
 
             default:
-                return self::throwError('no datatable request detected');
+                return self::handleError('no datatable request detected');
         }
     }
 
 
-    /**
-     * Throw Error
-     *
-     * @param String $message
-     * @return Error
-     */
-    public static function throwError($message)
+    public static function handleError(string $message)
     {
-        $response = Services::response();
-        return $response->setJSON([
+        return [
             'data' => [], // Empty data to prevent error on client side.
             'error' => $message,
-        ]);
+        ];
     }
 }   // End of DataTables Library Class.
