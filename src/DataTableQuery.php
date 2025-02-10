@@ -33,7 +33,11 @@ class DataTableQuery
      */
     private $rowClass;
 
-    private int | string $countResult;
+    /**
+     *
+     * @var int|string
+     */
+    private $countResult;
 
     private $doQueryFilter = FALSE;
 
